@@ -1,0 +1,15 @@
+class_name: Response
+attributes:
+  - id
+  - plurk_id
+  - user_id
+  - lang
+  - qualifier
+  - content
+  - content_raw
+  - posted
+
+required_params:
+    - plurk_id
+    - content
+    - qualifier

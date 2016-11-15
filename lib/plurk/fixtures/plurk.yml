@@ -1,0 +1,41 @@
+class_name: Plurk
+attributes:
+  - id
+  - plurk_id
+  - plurk_type
+#
+  - user_id
+  - owner_id
+  - has_gift
+#
+  - anonymous
+  - handle
+#
+  - qualifier
+  - qualifier_translated
+  - lang
+#
+  - content
+  - content_raw
+#
+  - is_unread
+  - response_count
+  - responses_seen
+  - posted
+#
+  - no_comments
+  - limited_to
+#
+  - favorite
+  - favorite_count
+  - favorers
+#
+  - replurkable
+  - replurked
+  - replurker_id
+  - replurkers_count
+  - replurkers
+
+required_params:
+    - content
+    - qualifier

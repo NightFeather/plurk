@@ -1,0 +1,6 @@
+class_name: OAuthToken
+attributes:
+  - app_id
+  - user_id
+  - issued
+  - deviceId
