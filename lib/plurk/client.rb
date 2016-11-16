@@ -46,7 +46,7 @@ module Plurk
     # output: result in JSON
     def request(url, body=nil, headers=nil)
       resp = @access_token.post(url, body, headers)
-      if resp.code == 200
+      if resp.is_a? Net::HTTPOK
         return JSON.parse(resp.body)
       else
         raise RequestError, "#{resp.code}: " + JSON.parse(resp.body)["error_text"]
