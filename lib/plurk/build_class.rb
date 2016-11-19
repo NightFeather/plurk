@@ -27,7 +27,15 @@ module Plurk
     module DataContainer
       def initialize arg
         if arg.is_a? Hash
+
+          if self.class.respond_to?(:required_params)
+            unless self.class.required_params.map { |param| arg.key? param }.inject(true){ |o,i| (o and i) }
+              raise ArgumentError, "Missing one of the required arguments: [#{self.class.required_params.join(", ")}]"
+            end
+          end
+
           super()
+
           arg.each_pair do |k,v|
             # drop not-in-member attributes
             send("#{k}=",v) if self.class.members.include? k.to_sym
