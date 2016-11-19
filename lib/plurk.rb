@@ -3,10 +3,12 @@ require 'oauth'
 require 'json'
 require 'yaml'
 
-require_relative './plurk/build_class'
-require_relative './plurk/client'
+require 'plurk/build_class'
+require 'plurk/client'
+require 'plurk/comet_channel'
 
 module Plurk
+  PlurkError = Class.new(StandardError)
 end
 
 Dir[File.join(__dir__,'/plurk/fixtures/*.yml')].each do |f|

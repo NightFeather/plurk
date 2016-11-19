@@ -55,7 +55,6 @@ module Plurk
       end
     end
 
-    PlurkError = Class.new(StandardError)
     RequestError = Class.new(PlurkError)
 
   end

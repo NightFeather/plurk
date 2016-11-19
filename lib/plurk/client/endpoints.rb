@@ -16,15 +16,13 @@ module Plurk
         offset = offset.strftime("%Y-%m-%dT%H:%M:%S") if offset.is_a? Time
         resp = request "/APP/Polling/getPlurks", offset: offset
         resp["plurks"].map! { |i| Plurk.new(i) }
-        resp["plurk_users"].map! { |k,v| User.new(v) }
+        resp["plurk_users"] = resp["plurk_users"].map { |k,v| User.new(v) }
         return resp
       end
 
       def get_plurk plurk_id
-        resp = request "/APP/Polling/getPlurk", offset: offset
-        resp["plurks"].map! { |i| Plurk.new(i) }
-        resp["plurk_users"].map! { |k,v| User.new(v) }
-        return resp
+        resp = request "/APP/Timeline/getPlurk", plurk_id: plurk_id
+        Plurk.new(resp["plurk"])
       end
 
       def add_plurk content, qual = ":", limited_to = nil
@@ -33,13 +31,13 @@ module Plurk
         Plurk.new(resp)
       end
 
-      def del_plurk plurk_id
-        request "/APP/Timeline/plurkDelete", { plurk_id: plurk_id }
-      end
-
       def edit_plurk plurk_id, content
         resp = request "/APP/Timeline/plurkEdit", { plurk_id: plurk_id, content: content}
         Plurk.new(resp)
+      end
+
+      def del_plurk plurk_id
+        request "/APP/Timeline/plurkDelete", { plurk_id: plurk_id }
       end
 
       def add_response plurk_id, content, qual = ":"
