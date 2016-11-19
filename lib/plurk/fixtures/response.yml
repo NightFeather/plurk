@@ -8,6 +8,8 @@ attributes:
   - content
   - content_raw
   - posted
+  - user
+  - plurk
 
 required_params:
     - plurk_id
