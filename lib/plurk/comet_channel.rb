@@ -14,7 +14,7 @@ module Plurk
       if resp.is_a? Net::HTTPOK
         extracted = JSON.parse(resp.body.match(/^CometChannel\.scriptCallback\((.+)\);$/)[1])
         @offset = extracted["new_offset"]
-        p data = extracted["data"]
+        data = extracted["data"]
         return [] unless data
         data.map! do |i|
           case i.delete("type")
