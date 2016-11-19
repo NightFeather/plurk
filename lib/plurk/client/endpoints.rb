@@ -9,7 +9,7 @@ module Plurk
 
       def get_user_channel
         resp = request "/APP/Realtime/getUserChannel"
-        return resp["comet_server"]
+        return CometChannel.new(resp["comet_server"])
       end
 
       def get_plurks offset = nil
