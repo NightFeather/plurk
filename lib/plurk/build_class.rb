@@ -3,6 +3,9 @@ module Plurk
     class <<self
       def insert ns, file
         meta = YAML.load_file file
+
+        raise ArgumentError, "missing class_name in `#{file}`" unless meta["class_name"]
+
         if  meta['attributes'] and
             meta['attributes'].is_a? Array and
             meta['attributes'].compact.length > 0
@@ -21,6 +24,9 @@ module Plurk
         else
           ns.send( :const_set, meta['class_name'], meta['attributes'] || Class.new )
         end
+
+        return meta["class_name"]
+
       end
     end
 

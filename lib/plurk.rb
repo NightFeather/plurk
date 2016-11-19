@@ -10,7 +10,10 @@ module Plurk
 end
 
 Dir[File.join(__dir__,'/plurk/fixtures/*.yml')].each do |f|
-  Plurk::BuildClass.insert(Plurk, f)
+  name = Plurk::BuildClass.insert(Plurk, f)
+  name.scan(/[A-Z]+[a-z0-9]*/).map(&:downcase).join("_").tap do |fname|
+    require "plurk/#{fname}" if File.exists? File.join(__dir__, "plurk", fname + ".rb")
+  end
 end
 
 require 'plurk/client'
