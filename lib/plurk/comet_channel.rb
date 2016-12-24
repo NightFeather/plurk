@@ -1,5 +1,10 @@
 module Plurk
+
+  # Handles the state of a comet channel
   class CometChannel
+
+    # Initialize with a url to channel (Without oauth authorization)
+    # @param uri [String] or [URI]
     def initialize uri
       uri = URI(uri) if uri.is_a? String
       @uri = uri
@@ -7,6 +12,9 @@ module Plurk
       @offset = @query["offset"]
     end
 
+    # Runs one comet cycle
+    # request -> reponse -> parse if is a HTTPOK -> store new offset
+    # @raise [CometError] when response is not a `Net::HTTPOK`
     def fetch
       @query["offset"] = @offset
       @uri.query = serialize_query
@@ -38,6 +46,7 @@ module Plurk
 
     private
 
+    # Why ruby doesn't have a builtin method to convert between a `Hash` and a HTTP::GET query
     def serialize_query
       @query.map { |k,v| "#{k}=#{v}" }.join("&")
     end

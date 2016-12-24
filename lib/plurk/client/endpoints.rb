@@ -1,5 +1,7 @@
 module Plurk
   class Client
+
+    # wrap up some frequesntly used (maybe) api endpoints
     module Endpoints
 
       def get_me

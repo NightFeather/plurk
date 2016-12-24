@@ -2,6 +2,8 @@
 require_relative 'client/endpoints'
 
 module Plurk
+
+  # Contains credentials
   class Client
 
     include Endpoints
@@ -15,6 +17,11 @@ module Plurk
       :authorize_path     => '/OAuth/authorize'
     }
 
+
+    # Initializes a `Plurk::Client` instance
+    # @param key [String] application key
+    # @param secret [String] application secret
+    # @return [Plurk::Client] with a default handler that can access public resource
     def initialize(key, secret)
         @key, @secret = key, secret
         @consumer = OAuth::Consumer.new(@key, @secret, DEFAULT_OAUTH_OPTIONS)
@@ -22,16 +29,17 @@ module Plurk
         @access_token = OAuth::AccessToken.new(@consumer, nil, nil)
     end
 
-    # output: authorize url
+    # Generate a authorization request url
+    # @return [String] authrization request url
     def get_authorize_url
         @request_token = @consumer.get_request_token
         return @request_token.authorize_url
     end
 
-    # case 1: has access token already
-    # input: access token, access token secret
-    # case 2: no access token, auth need
-    # input: verification code    
+    # Authorize this client with access to an account.
+    # @param key [String] represents access token or oauth verifier depends on secret representation
+    # @param secret [String] default to `nil`
+    # @return [OAuth::AccessToken] this will be stored in current instance, no need to take care about
     def authorize(key, secret=nil)
         @access_token = case secret
                            when nil then
@@ -42,8 +50,13 @@ module Plurk
         return @access_token
     end
 
-    # input: plurk APP url, options in hash
-    # output: result in JSON
+    # Request with aouth authorizations
+    # @param url [String] uri string to the api endpoint
+    # @param body [Hash] addition params you want to request with. default to `nil`
+    # @param headers [hash] default to `nil`
+    # @return [Hash] parsed response body
+    # @raise [Plurk::Client::RequestError] when the response is not 200
+    #   or contains exceptions
     def request(url, body=nil, headers=nil)
       resp = @access_token.post(url, body, headers)
       if resp.is_a? Net::HTTPOK

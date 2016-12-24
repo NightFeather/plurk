@@ -1,6 +1,11 @@
 module Plurk
   module BuildClass
     class <<self
+
+      # Generate a attibutes class base on the content of a file with yaml format
+      # @param ns [Module] the namespace of new class will belongs to.
+      # @param file [String] filename to the file contains definition
+      # @return [String] Generated class name (without namespace)
       def insert ns, file
         meta = YAML.load_file file
 
@@ -30,7 +35,10 @@ module Plurk
       end
     end
 
+    # Modifies some behavior of origin `Struct`
     module DataContainer
+
+      # Can accept a hash as initialization argument
       def initialize arg
         if arg.is_a? Hash
 
