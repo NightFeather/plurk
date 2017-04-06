@@ -9,7 +9,7 @@ module Plurk
     include Endpoints
 
     DEFAULT_OAUTH_OPTIONS = {
-      :site               => 'http://www.plurk.com',
+      :site               => 'https://www.plurk.com',
       :scheme             => :header,
       :http_method        => :post,
       :request_token_path => '/OAuth/request_token',
