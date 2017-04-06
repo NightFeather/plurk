@@ -21,10 +21,14 @@ module Plurk
           if meta['required_params'] and
             meta['required_params'].is_a? Array and
             meta['required_params'].compact.length > 0
-            ns.send(:const_get, meta['class_name'])
-              .send(:define_singleton_method, "required_params") do
-                return meta['required_params']
-              end
+            klass = ns.send(:const_get, meta['class_name'])
+            klass.send(:define_singleton_method, "required_params") do
+              return meta['required_params']
+            end
+            klass.send(:define_method, "type") do
+              return meta['class_name'].downcase
+            end
+
           end
         else
           ns.send( :const_set, meta['class_name'], meta['attributes'] || Class.new )
