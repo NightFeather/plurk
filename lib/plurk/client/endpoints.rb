@@ -43,23 +43,23 @@ module Plurk
       end
 
       def add_response plurk_id, content, qual = ":"
-        resp = request "/APP/Timeline/responseAdd",
+        resp = request "/APP/Responses/responseAdd",
                         { plurk_id: plurk_id, content: content, qualifier: qual }
         Response.new(resp)
       end
 
       def del_response response_id, plurk_id
-        request "/APP/Timeline/responseDelete", { response_id: response_id, plurk_id: plurk_id }
+        request "/APP/Responses/responseDelete", { response_id: response_id, plurk_id: plurk_id }
 
       end
 
       def add_friend friend_id
-        resp = request "/APP/Timeline/becomeFriend", { friend_id: friend_id }
+        resp = request "/APP/FriendsFans/becomeFriend", { friend_id: friend_id }
         User.new(resp)
       end
 
       def del_friend friend_id
-        request "/APP/Timeline/removeAsFriend", { friend_id: friend_id }
+        request "/APP/FriendsFans/removeAsFriend", { friend_id: friend_id }
       end
 
       def get_alerts
