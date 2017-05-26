@@ -22,6 +22,7 @@ attributes:
   - response_count
   - responses_seen
   - posted
+  - responded
 #
   - no_comments
   - limited_to
