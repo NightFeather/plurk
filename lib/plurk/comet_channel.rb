@@ -39,7 +39,12 @@ module Plurk
         end
         return data
       else
-        raise CometError, "#{resp.code}: #{resp.body}"
+        case resp
+        when Net::HTTPRedirection
+          raise CometError, "#{resp.code}: resource moved to #{resp['Location']}"
+        else
+          raise CometError, "#{resp.code}: #{resp.body}"
+        end
       end
     end
 
