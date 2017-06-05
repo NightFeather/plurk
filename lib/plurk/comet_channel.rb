@@ -20,7 +20,10 @@ module Plurk
       @uri.query = serialize_query
       resp = Net::HTTP.get_response @uri
       if resp.is_a? Net::HTTPOK
-        extracted = JSON.parse(resp.body.match(/^CometChannel\.scriptCallback\((.+)\);$/)[1])
+        if resp.body.match(/^CometChannel\.scriptCallback\((.+)\);$/).nil?
+          raise CometError, "invalid body: #{resp.body}"
+        end
+        extracted = JSON.parse($~[1])
         @offset = extracted["new_offset"]
         data = extracted["data"]
         return [] unless data
@@ -39,11 +42,15 @@ module Plurk
         end
         return data
       else
-        case resp
-        when Net::HTTPRedirection
-          raise CometError, "#{resp.code}: resource moved to #{resp['Location']}"
-        else
+        if resp.class.body_permitted?
           raise CometError, "#{resp.code}: #{resp.body}"
+        else
+          case resp
+          when Net::HTTPRedirection
+            raise CometError, "#{resp.code}: resource moved to #{resp['Location']}"
+          else
+            raise CometError, "#{resp.code}: this response has no content"
+          end
         end
       end
     end
