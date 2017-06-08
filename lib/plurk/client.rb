@@ -68,7 +68,7 @@ module Plurk
       end
     end
 
-    RequestError = Class.new(PlurkError)
+    RequestError = Class.new(Error)
 
   end
 end

@@ -6,7 +6,7 @@ require 'yaml'
 require 'plurk/build_class'
 
 module Plurk
-  PlurkError = Class.new(StandardError)
+  Error = Class.new(StandardError)
 end
 
 Dir[File.join(__dir__,'/plurk/fixtures/*.yml')].each do |f|

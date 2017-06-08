@@ -21,7 +21,7 @@ module Plurk
       resp = Net::HTTP.get_response @uri
       if resp.is_a? Net::HTTPOK
         if resp.body.match(/^CometChannel\.scriptCallback\((.+)\);$/).nil?
-          raise CometError, "invalid body: #{resp.body}"
+          raise InvalidBodyError, resp.body
         end
         extracted = JSON.parse($~[1])
         @offset = extracted["new_offset"]
@@ -42,15 +42,12 @@ module Plurk
         end
         return data
       else
-        if resp.class.body_permitted?
-          raise CometError, "#{resp.code}: #{resp.body}"
+        exception = ServerError.new(resp.code)
+        case resp
+        when Net::HTTPRedirection
+          raise exception, resp['Location']
         else
-          case resp
-          when Net::HTTPRedirection
-            raise CometError, "#{resp.code}: resource moved to #{resp['Location']}"
-          else
-            raise CometError, "#{resp.code}: this response has no content"
-          end
+          raise exception, resp.message
         end
       end
     end
@@ -63,7 +60,14 @@ module Plurk
       @query.map { |k,v| "#{k}=#{v}" }.join("&")
     end
 
-  CometError = Class.new(PlurkError)
+  Error = Class.new(::Plurk::Error)
+  CometError = Class.new(Error)
+  InvalidBodyError = Class.new(CometError)
+
+  class ServerError < Error
+    attr_reader :code
+    def initialize val; @code = val; end
+  end
 
   end
 end
