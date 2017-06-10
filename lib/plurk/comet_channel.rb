@@ -20,27 +20,7 @@ module Plurk
       @uri.query = serialize_query
       resp = Net::HTTP.get_response @uri
       if resp.is_a? Net::HTTPOK
-        if resp.body.match(/^CometChannel\.scriptCallback\((.+)\);$/).nil?
-          raise InvalidBodyError, resp.body
-        end
-        extracted = JSON.parse($~[1])
-        @offset = extracted["new_offset"]
-        data = extracted["data"]
-        return [] unless data
-        data.map! do |i|
-          case i.delete("type")
-          when "new_plurk"
-            Plurk.new(i)
-          when "new_response"
-            Response.new(i["response"]).tap { |res|
-              res.user = User.new(i["user"][res.user_id.to_s])
-              res.plurk = Plurk.new(i["plurk"])
-            }
-          else
-            i
-          end
-        end
-        return data
+        return parse_resp resp
       else
         exception = ServerError.new(resp.code)
         case resp
@@ -55,14 +35,37 @@ module Plurk
 
     private
 
+    def parse_resp resp
+      if resp.body.match(/^CometChannel\.scriptCallback\((.+)\);$/).nil?
+        raise InvalidBodyError, resp.body
+      end
+      extracted = JSON.parse($~[1])
+      @offset = extracted["new_offset"]
+      data = extracted["data"]
+      return [] unless data
+      data.map! do |i|
+        case i.delete("type")
+        when "new_plurk"
+          Plurk.new(i)
+        when "new_response"
+          Response.new(i["response"]).tap do |res|
+            res.user = User.new(i["user"][res.user_id.to_s])
+            res.plurk = Plurk.new(i["plurk"])
+          end
+        else
+          i
+        end
+      end
+      return data
+    end
+
     # Why ruby doesn't have a builtin method to convert between a `Hash` and a HTTP::GET query
     def serialize_query
       @query.map { |k,v| "#{k}=#{v}" }.join("&")
     end
 
   Error = Class.new(::Plurk::Error)
-  CometError = Class.new(Error)
-  InvalidBodyError = Class.new(CometError)
+  InvalidBodyError = Class.new(Error)
 
   class ServerError < Error
     attr_reader :code
