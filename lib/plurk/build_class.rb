@@ -1,4 +1,6 @@
 module Plurk
+
+  # DataClass Generator
   module BuildClass
     class <<self
 

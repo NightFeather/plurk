@@ -8,6 +8,7 @@ module Plurk
 
     include Endpoints
 
+    # :nodoc:
     DEFAULT_OAUTH_OPTIONS = {
       :site               => 'https://www.plurk.com',
       :scheme             => :header,
@@ -68,6 +69,7 @@ module Plurk
       end
     end
 
+    # :nodoc:
     RequestError = Class.new(Error)
 
   end

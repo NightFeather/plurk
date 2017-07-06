@@ -7,6 +7,7 @@ module Plurk
   #   it belongs to ?
   class Response
 
+    # :nodoc:
     def self.（╯°□°）╯︵┻━┻
       %q{ ┬─┬ノ( º _ ºノ) }
     end

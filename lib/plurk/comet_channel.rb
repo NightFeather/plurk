@@ -4,17 +4,17 @@ module Plurk
   class CometChannel
 
     # Initialize with a url to channel (Without oauth authorization)
-    # @param uri [String] or [URI]
+    # @param uri [String]
     def initialize uri
-      uri = URI(uri) if uri.is_a? String
-      @uri = uri
+      @uri = URI(uri)
       @query = Hash[@uri.query.split("&").map { |i| i.split("=") }]
       @offset = @query["offset"]
     end
 
     # Runs one comet cycle
     # request -> reponse -> parse if is a HTTPOK -> store new offset
-    # @raise [CometError] when response is not a `Net::HTTPOK`
+    # @raise [ServerError] when response is not a `Net::HTTPOK`
+    # @return [Array<Plurk,Response>]
     def fetch
       @query["offset"] = @offset
       @uri.query = serialize_query
@@ -35,6 +35,10 @@ module Plurk
 
     private
 
+    # Parse responses from comet into corresponding wrapper class
+    # @param resp [Net::HTTPResponse] response from comet server
+    # @raise [InvalidBodyError] when a irregular body recieved
+    # @return [Array<Plurk,Response>]
     def parse_resp resp
       if resp.body.match(/^CometChannel\.scriptCallback\((.+)\);$/).nil?
         raise InvalidBodyError, resp.body
@@ -59,14 +63,19 @@ module Plurk
       return data
     end
 
-    # Why ruby doesn't have a builtin method to convert between a `Hash` and a HTTP::GET query
+    # Convert hash into urlencoded-form format
+    # @return [String] convert result we expected
     def serialize_query
       @query.map { |k,v| "#{k}=#{v}" }.join("&")
     end
 
+  # Base Error Class inside here
   Error = Class.new(::Plurk::Error)
+
+  # Error Class
   InvalidBodyError = Class.new(Error)
 
+  # Error Class includes http status code
   class ServerError < Error
     attr_reader :code
     def initialize val; @code = val; end
