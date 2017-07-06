@@ -5,6 +5,7 @@ attributes:
   - plurk_type
 #
   - user_id
+  - user
   - owner_id
   - has_gift
 #
