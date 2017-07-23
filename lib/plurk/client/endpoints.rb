@@ -71,6 +71,18 @@ module Plurk
         request "/APP/Timeline/plurkDelete", { plurk_id: plurk_id }
       end
 
+      # Access "/APP/Responses/get"
+      # @param plurk_id [Integer]
+      # @param from_response [Integer]
+      # @param count [Integer]
+      def get_responses plurk_id, from_response = 0, count = "all"
+        resp = request "/APP/Responses/get",
+                        { plurk_id: plurk_id, from_response: from_response, count: count }
+        friends, responses = resp['friends'], resp['responses']
+        friends = Hash[friends.map { |k,v| [k.to_i, User.new(v)] }]
+        responses.map { |r| r = Response.new(r); r.user = friends[r.user_id]; r }
+      end
+
       # Access "/APP/Responses/responseAdd"
       # @param plurk_id [Integer]
       # @param content  [String]
