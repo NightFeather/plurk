@@ -64,6 +64,11 @@ module Plurk
           super(*arg)
         end
       end
+
+      def freeze
+        self.class.members.map { |m| send m }.each { |o| o.freeze if o.respond_to? :freeze }
+        super
+      end
     end
 
   end
